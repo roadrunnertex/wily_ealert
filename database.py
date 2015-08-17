@@ -8,7 +8,7 @@ Database class to interface with SQLite3 database
 __author__ = "Dan Newburg"
 __version__ = "1.1.3"
 __maintainer__ = "Dan Newburg"
-__email__ = "dan.newburg@frostbank.com"
+__email__ = "dan.newburg@gmail.com"
 __status__ = "Development"
 
 from logger import Logger

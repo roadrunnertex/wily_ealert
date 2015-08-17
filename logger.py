@@ -8,7 +8,7 @@ Logger class to initialize logging for classes.
 __author__ = "Dan Newburg"
 __version__ = "1.0.0"
 __maintainer__ = "Dan Newburg"
-__email__ = "dan.newburg@frostbank.com / dan.newburg@gmail.com"
+__email__ = "dan.newburg@gmail.com"
 __status__ = "Development"
 
 import os

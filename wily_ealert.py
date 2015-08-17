@@ -11,7 +11,7 @@ Tested with Python 3.4.3.
 __author__ = "Dan Newburg"
 __version__ = "1.1.5"
 __maintainer__ = "Dan Newburg"
-__email__ = "dan.newburg@frostbank.com / dan.newburg@gmail.com"
+__email__ = "dan.newburg@gmail.com"
 __status__ = "Development"
 
 import base64
