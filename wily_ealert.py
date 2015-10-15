@@ -9,10 +9,10 @@ Tested with Python 3.4.3.
 """
 
 __author__ = "Dan Newburg"
-__version__ = "1.1.5"
+__version__ = "1.2.0"
 __maintainer__ = "Dan Newburg"
-__email__ = "dan.newburg@gmail.com"
-__status__ = "Development"
+__email__ = "dan.newburg@frostbank.com / dan.newburg@gmail.com"
+__status__ = "Production"
 
 import base64
 import configparser
@@ -155,18 +155,20 @@ def main():
 	 base64.b64decode(str.encode(config['ealert']['password'])).decode('utf-8'), config['ealert']['uri'], config['ealert']['provider'])
 	ealert_connection.set_client()
 
-	if options.alert_status != "3":
-		ealert_db.simple_select_from_database("eventid", "metricname", options.metric_name)
-		event_ids = list(set(ealert_db.db_cursor.fetchall()))
-		logger.debug("IDs: %s" % event_ids)
-		if len(event_ids) > 0:
-			while event_ids:
-				event_id = event_ids.pop()[0]
-				ealert_connection.reset_event(event_id,options.metric_name,affected_metric_value,affected_fqdn,status)
-				ealert_db.simple_delete_from_database("eventid", event_id)
-				ealert_db.commit_changes()
-		else:
-			logger.debug("No events found to close for metric name %s." % options.metric_name)
+	ealert_db.simple_select_from_database("eventid", "metricname", options.metric_name)
+	event_ids = list(set(ealert_db.db_cursor.fetchall()))
+	logger.debug("IDs: %s" % event_ids)
+	if len(event_ids) > 0:
+		while event_ids:
+			event_id = event_ids.pop()[0]
+			ealert_connection.set_event_array()
+			ealert_connection.append_event_parameter("alertstate","Closed")
+			ealert_connection.append_event_parameter("metricvalue",affected_metric_value)
+			ealert_connection.submit_event_update(event_id)
+			ealert_db.simple_delete_from_database("eventid", event_id)
+			ealert_db.commit_changes()
+	else:
+		logger.debug("No events found to close for metric name %s." % options.metric_name)
 
 	if options.alert_status != "1":
 		escalation_team = None
@@ -178,6 +180,7 @@ def main():
 		
 		ealert_connection.set_event_array()
 		ealert_connection.append_event_parameter("alertname",options.alert_name)
+		ealert_connection.append_event_parameter("alertstate","New")
 		ealert_connection.append_event_parameter("alertstatus",status)
 		ealert_connection.append_event_parameter("eventtime",options.event_time)
 		ealert_connection.append_event_parameter("metricname",options.metric_name)

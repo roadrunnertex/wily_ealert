@@ -15,10 +15,10 @@ from suds.client import Client
 import sys
 
 __author__ = "Dan Newburg"
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 __maintainer__ = "Dan Newburg"
-__email__ = "dan.newburg@gmail.com"
-__status__ = "Development"
+__email__ = "dan.newburg@frostbank.com / dan.newburg@gmail.com"
+__status__ = "Production"
 
 class EAlertConnection():
 	def __init__(self, debug, log_path, username, password, uri, provider):
@@ -50,7 +50,6 @@ class EAlertConnection():
 
 		except Exception as detail:
 			self.logger.error(detail)
-			sys.exit(1)
 
 	def reset_event(self,eventid,metric_name,metric_value,affected_fqdn, status):
 		try:
@@ -60,6 +59,11 @@ class EAlertConnection():
 
 		except Exception as detail:
 			self.logger.error(detail)
-			sys.exit(1)
 
-
+	def submit_event_update(self,eventid):
+		try:
+			#desc = "The %s alert for %s is now classified as a %s state with a value of %s." % (metric_name,affected_fqdn,status,metric_value)
+			self.client.service.SubmitEventUpdate(Username=self.username,Password=self.password,ProviderName=self.provider,EventID=eventid,ResetEvents="true",EventParameters=self.event_array)
+			self.logger.info("[%s] Reset Event ID %s" % (os.getpid(), eventid))
+		except Exception as detail:
+			self.logger.error(detail)
